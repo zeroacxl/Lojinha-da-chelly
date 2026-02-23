@@ -1,1 +1,0 @@
-# Lojinha-da-chelly
