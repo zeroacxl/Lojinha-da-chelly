@@ -39,7 +39,7 @@
     .brand-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--rose),var(--blue));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;box-shadow:0 6px 20px rgba(244,63,94,.35);transition:transform .2s}
     .brand:hover .brand-icon{transform:scale(1.07)}
     .brand-name{font-family:var(--font-display);font-size:1.6rem;font-weight:900;font-style:italic;background:linear-gradient(135deg,var(--rose),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    @media(max-width:480px){.brand-name{display:none}}
+    @media(max-width:480px){.brand-name{font-size:1.2rem}}
     .nav-actions{display:flex;align-items:center;gap:.75rem}
     .nav-btn{padding:.6rem;border-radius:14px;border:1.5px solid #f1f5f9;background:#f8fafc;color:var(--slate-soft);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .2s}
     .nav-btn:hover{background:white;border-color:#dbeafe;color:var(--blue)}
@@ -288,6 +288,44 @@
     .empty-state .icon{font-size:3rem;margin-bottom:1rem}
     .empty-state p{font-style:italic;font-size:.85rem}
     #shop-view{display:block} #admin-view{display:none}
+
+    /* STOCK BADGE no card */
+    .stock-pill{display:inline-flex;align-items:center;gap:.3rem;padding:.28rem .7rem;border-radius:99px;font-size:.62rem;font-weight:900;letter-spacing:.08em;margin-bottom:.6rem}
+    .stock-pill.ok{background:#dcfce7;color:#166534;border:1.5px solid #bbf7d0}
+    .stock-pill.low{background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa}
+    .stock-pill.out{background:var(--rose-light);color:var(--rose-dark);border:1.5px solid #fecdd3}
+
+    /* QUANTITY SELECTOR */
+    .qty-wrap{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;justify-content:center}
+    .qty-btn{width:32px;height:32px;border-radius:10px;border:1.5px solid #e2e8f0;background:#f8fafc;color:var(--slate);font-size:1.1rem;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;line-height:1}
+    .qty-btn:hover:not(:disabled){background:var(--slate);color:white;border-color:var(--slate)}
+    .qty-btn:disabled{opacity:.35;cursor:not-allowed}
+    .qty-num{font-size:.9rem;font-weight:900;color:var(--slate);min-width:24px;text-align:center}
+
+    /* QUANTITY no modal de detalhe */
+    .detail-qty-wrap{display:flex;align-items:center;gap:.75rem;margin:1rem 0}
+    .detail-qty-label{font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:.15em;color:var(--slate-soft)}
+    .detail-qty-btn{width:38px;height:38px;border-radius:12px;border:1.5px solid #e2e8f0;background:#f8fafc;color:var(--slate);font-size:1.2rem;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1}
+    .detail-qty-btn:hover:not(:disabled){background:var(--slate);color:white;border-color:var(--slate)}
+    .detail-qty-btn:disabled{opacity:.35;cursor:not-allowed}
+    .detail-qty-num{font-size:1.1rem;font-weight:900;color:var(--slate);min-width:32px;text-align:center}
+
+    /* ESGOTADO inline */
+    .soon-msg{display:flex;align-items:center;gap:.6rem;padding:1rem 1.25rem;background:#fff1f2;border:1.5px solid #fecdd3;border-radius:1.25rem;font-size:.8rem;font-weight:700;color:var(--rose-dark);font-style:italic;line-height:1.5;margin:.5rem 0}
+
+    /* MOBILE otimizações */
+    @media(max-width:640px){
+      .product-grid{grid-template-columns:repeat(2,1fr);gap:.9rem}
+      .product-body{padding:1rem}
+      .product-name{font-size:.9rem}
+      .product-price{font-size:1.1rem}
+      .qty-wrap{gap:.35rem}
+      .qty-btn{width:28px;height:28px;font-size:1rem;border-radius:8px}
+      .qty-num{font-size:.85rem}
+      .btn-add{padding:.75rem;font-size:.65rem}
+      .btn-notify{padding:.75rem;font-size:.65rem}
+      .stock-pill{font-size:.58rem;padding:.22rem .55rem}
+    }
   </style>
 </head>
 <body>
@@ -537,24 +575,40 @@
       if(s==='cache'){dot.className='db-dot connected';lbl.textContent='Modo Otimizado (Cache)';}
     }
 
-    /* ── COMPRESSÃO DE IMAGEM OTIMIZADA (WEBP) ── */
-    // Mudança drástica para salvar Quota do Firebase Spark!
-    function compressImage(fileOrUrl, maxWidth=500, quality=0.6) {
+    /* ── COMPRESSÃO DE IMAGEM INTELIGENTE (WEBP) ── */
+    // Mantém alta qualidade visual enquanto controla o tamanho para o Firebase
+    function compressImage(fileOrUrl, maxWidth=1400, quality=0.92) {
       return new Promise((resolve, reject) => {
         const img = new Image();
         const url = typeof fileOrUrl === 'string' ? fileOrUrl : URL.createObjectURL(fileOrUrl);
-        
-        img.crossOrigin = "Anonymous"; // Necessário se for URL externa
+        img.crossOrigin = "Anonymous";
         img.onload = () => {
           if(typeof fileOrUrl !== 'string') URL.revokeObjectURL(url);
-          const scale = Math.min(1, maxWidth / img.width);
+
+          // Mantém proporção, nunca amplia além do original
+          const scale = Math.min(1, maxWidth / Math.max(img.width, img.height));
           const w = Math.round(img.width * scale);
           const h = Math.round(img.height * scale);
+
           const canvas = document.createElement('canvas');
           canvas.width = w; canvas.height = h;
-          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          // Usa WebP: reduz em até 80% o peso comparado ao JPEG do código anterior!
-          resolve(canvas.toDataURL('image/webp', quality));
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, w, h);
+
+          // Compressão adaptativa: começa com qualidade alta e só reduz se necessário
+          // Limite seguro para Firestore: ~800KB por campo
+          const MAX_BYTES = 800 * 1024;
+          const qualities = [0.92, 0.85, 0.78, 0.70, 0.62, 0.54, 0.45];
+          let chosen = canvas.toDataURL('image/webp', 0.92);
+          for (const q of qualities) {
+            const attempt = canvas.toDataURL('image/webp', q);
+            chosen = attempt;
+            // base64 tem ~33% overhead, tamanho real estimado = length * 0.75
+            if (attempt.length * 0.75 <= MAX_BYTES) break;
+          }
+          resolve(chosen);
         };
         img.onerror = reject;
         img.src = url;
@@ -616,31 +670,75 @@
       if(!list.length) { grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="icon">🔍</div><p>Nenhum produto nesta categoria ainda.</p></div>`; return; }
       
       grid.innerHTML = list.map((p,i) => {
-        // Lógica da Etiqueta de Desconto
         const isPromo = p.discountPrice && p.discountPrice < p.price;
         const discountPercent = isPromo ? Math.round(((p.price - p.discountPrice) / p.price) * 100) : 0;
         const currentPrice = isPromo ? p.discountPrice : p.price;
+        const stock = p.stock || 0;
+        
+        // Badge de estoque
+        let stockPill = '';
+        if (stock <= 0) {
+          stockPill = `<span class="stock-pill out">✗ Esgotado</span>`;
+        } else if (stock <= 3) {
+          stockPill = `<span class="stock-pill low">⚡ Últimas ${stock} unid.</span>`;
+        } else {
+          stockPill = `<span class="stock-pill ok">✔ ${stock} disponíveis</span>`;
+        }
+
+        // Seletor de quantidade no card (só quando há estoque)
+        const qtySelector = stock > 0 ? `
+          <div class="qty-wrap">
+            <button class="qty-btn" onclick="event.stopPropagation();window.cardQtyChange('${p.fid}',-1)" id="qminus-${p.fid}">−</button>
+            <span class="qty-num" id="qnum-${p.fid}">1</span>
+            <button class="qty-btn" onclick="event.stopPropagation();window.cardQtyChange('${p.fid}',1)" id="qplus-${p.fid}">+</button>
+          </div>` : '';
         
         return `
         <div class="product-card" style="animation-delay:${i*.06}s">
           <div class="product-img-wrap" onclick="window.openDetail('${p.fid}')">
             ${isPromo ? `<div class="discount-badge">🔥 ${discountPercent}% OFF</div>` : ''}
             <img src="${p.image}" alt="${p.name}" loading="lazy"/>
-            ${p.stock<=0?`<div class="out-of-stock-overlay"><div><div class="msg">Esgotado!</div><div class="sub">Em breve mais unidades</div></div></div>`:''}
+            ${stock<=0?`<div class="out-of-stock-overlay"><div><div class="msg">Esgotado!</div><div class="sub">Em breve mais unidades 🌸</div></div></div>`:''}
             <div class="rating-badge">★ ${p.rating||5}</div>
           </div>
           <div class="product-body">
             <h3 class="product-name">${p.name}</h3>
+            ${stockPill}
             <div class="price-wrap">
                 ${isPromo ? `<span class="product-price-old">${fmt(p.price)}</span>` : ''}
                 <span class="product-price">${fmt(currentPrice)}</span>
             </div>
-            ${p.stock>0
-              ?`<button class="btn-add" onclick="window.addToCart('${p.fid}',event)">+ Adicionar</button>`
+            ${stock>0 ? `
+              ${qtySelector}
+              <button class="btn-add" onclick="window.addToCartQty('${p.fid}',event)">+ Adicionar</button>`
               :`<button class="btn-notify" onclick="window.openMeAvise('${p.fid}')">🔔 Me Avise</button>`}
           </div>
         </div>`
       }).join('');
+      // Inicializa os estados de quantidade
+      list.forEach(p => { if((p.stock||0)>0) cardQtyState[p.fid] = cardQtyState[p.fid] || 1; });
+      syncCardQtyUI(list);
+    }
+
+    /* Controla estado de qty por produto no grid */
+    const cardQtyState = {};
+    window.cardQtyChange = (fid, delta) => {
+      const p = products.find(x=>x.fid===fid); if(!p) return;
+      const max = p.stock || 1;
+      cardQtyState[fid] = Math.min(max, Math.max(1, (cardQtyState[fid]||1) + delta));
+      syncCardQtyUI([p]);
+    };
+    function syncCardQtyUI(list) {
+      list.forEach(p => {
+        const qty = cardQtyState[p.fid] || 1;
+        const max = p.stock || 1;
+        const numEl = document.getElementById('qnum-'+p.fid);
+        const minusEl = document.getElementById('qminus-'+p.fid);
+        const plusEl = document.getElementById('qplus-'+p.fid);
+        if(numEl) numEl.textContent = qty;
+        if(minusEl) minusEl.disabled = qty <= 1;
+        if(plusEl) plusEl.disabled = qty >= max;
+      });
     }
 
     window.setTab = btn => {
@@ -649,16 +747,29 @@
     };
 
     /* ── CART ── */
-    window.addToCart = function(fid, e) {
-      if(e) e.stopPropagation();
+    window.addToCart = function(fid, e, qty=1) {
+      if(e && e.stopPropagation) e.stopPropagation();
       const p = products.find(x=>x.fid===fid);
       if(!p||p.stock<=0) return;
-      
-      // Respeita o preço promocional se existir
       const finalPrice = (p.discountPrice && p.discountPrice < p.price) ? p.discountPrice : p.price;
-      
-      cartItems.push({...p, price: finalPrice, cartId: Date.now()+Math.random()});
-      updateCartBadge(); toast('✅ Adicionado à sacola!');
+      // Verifica quantas já estão no carrinho para não ultrapassar o estoque
+      const inCart = cartItems.filter(x=>x.fid===fid).length;
+      const canAdd = Math.min(qty, p.stock - inCart);
+      if(canAdd <= 0){ toast('⚠️ Quantidade máxima no carrinho!'); return; }
+      for(let i=0; i<canAdd; i++){
+        cartItems.push({...p, price: finalPrice, cartId: Date.now()+Math.random()});
+      }
+      updateCartBadge();
+      toast(canAdd > 1 ? `✅ ${canAdd}x adicionados à sacola!` : '✅ Adicionado à sacola!');
+    };
+
+    window.addToCartQty = function(fid, e) {
+      if(e && e.stopPropagation) e.stopPropagation();
+      const qty = cardQtyState[fid] || 1;
+      window.addToCart(fid, null, qty);
+      // Reseta qty para 1 após adicionar
+      cardQtyState[fid] = 1;
+      syncCardQtyUI([products.find(x=>x.fid===fid)].filter(Boolean));
     };
     
     window.removeFromCart = function(cid) {
@@ -771,6 +882,7 @@
     /* ── PRODUCT DETAIL ── */
     window.openDetail = fid => {
       currentProduct = products.find(p=>p.fid===fid); if(!currentProduct) return;
+      detailQty = 1;
       $('detail-img').src = currentProduct.image;
       $('detail-img').alt = currentProduct.name;
       $('detail-stars-large').innerHTML = starsHTML(currentProduct.rating||5,'0.9rem');
@@ -797,10 +909,24 @@
           </div>
           
           ${p.description ? `<div style="margin:1.25rem 0;padding:1.25rem;background:#f8fafc;border:1.5px solid #f1f5f9;border-radius:1.25rem;font-size:.85rem;color:var(--slate-mid);line-height:1.75;font-style:italic;white-space:pre-wrap">${p.description}</div>` : ''}
-          
-          ${p.stock>0
-            ?`<button class="btn-add" style="border-radius:1.25rem;padding:1.2rem;font-size:.75rem" onclick="window.addToCart('${p.fid}',null);window.closeDetail()">+ Adicionar à Sacola</button>`
-            :`<button class="btn-notify" style="border-radius:1.25rem;padding:1.2rem;font-size:.75rem" onclick="window.closeDetail();window.openMeAvise('${p.fid}')">🔔 Me Avise quando chegar</button>`}
+
+          ${p.stock>0 ? `
+            <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
+              ${p.stock<=3
+                ? `<span class="stock-pill low">⚡ Últimas ${p.stock} unidades!</span>`
+                : `<span class="stock-pill ok">✔ ${p.stock} unidades disponíveis</span>`}
+            </div>
+            <div class="detail-qty-wrap">
+              <span class="detail-qty-label">Quantidade:</span>
+              <button class="detail-qty-btn" id="dqminus" onclick="window.detailQtyChange(-1)">−</button>
+              <span class="detail-qty-num" id="dqnum">1</span>
+              <button class="detail-qty-btn" id="dqplus" onclick="window.detailQtyChange(1)">+</button>
+              <span style="font-size:.7rem;color:var(--slate-soft);font-weight:700">máx. ${p.stock}</span>
+            </div>
+            <button class="btn-add" style="border-radius:1.25rem;padding:1.2rem;font-size:.75rem" onclick="window.addDetailToCart()">+ Adicionar à Sacola</button>`
+          : `
+            <div class="soon-msg">🌸 Esse produto está esgotado, mas logo logo teremos mais! Quer ser avisada?</div>
+            <button class="btn-notify" style="border-radius:1.25rem;padding:1.2rem;font-size:.75rem" onclick="window.closeDetail();window.openMeAvise('${p.fid}')">🔔 Me Avise quando chegar</button>`}
         </div>
         <div class="comments-section">
           <h3 class="section-title">Feedbacks 💬</h3>
@@ -849,7 +975,22 @@
       } catch(e) { console.error(e); toast('⚠️ Erro ao publicar avaliação.'); }
     };
 
-    window.closeDetail = () => { $('detail-modal').classList.remove('open'); currentProduct=null; };
+    let detailQty = 1;
+    window.detailQtyChange = (delta) => {
+      if(!currentProduct) return;
+      const max = currentProduct.stock || 1;
+      detailQty = Math.min(max, Math.max(1, detailQty + delta));
+      const numEl = $('dqnum'), minusEl = $('dqminus'), plusEl = $('dqplus');
+      if(numEl) numEl.textContent = detailQty;
+      if(minusEl) minusEl.disabled = detailQty <= 1;
+      if(plusEl) plusEl.disabled = detailQty >= max;
+    };
+    window.addDetailToCart = () => {
+      if(!currentProduct) return;
+      window.addToCart(currentProduct.fid, null, detailQty);
+      window.closeDetail();
+    };
+    window.closeDetail = () => { $('detail-modal').classList.remove('open'); currentProduct=null; detailQty=1; };
     window.handleDetailOverlayClick = e => { if(e.target===$('detail-modal')) window.closeDetail(); };
 
     /* ── ME AVISE ── */
@@ -912,8 +1053,8 @@
     window.handleImageUpload = async e => {
       const file = e.target.files[0]; if(!file) return;
       try {
-        // Redução Extrema WebP para não estourar o banco Spark
-        newProdImg = await compressImage(file, 500, 0.6);
+        // Compressão inteligente WebP - alta qualidade preservada
+        newProdImg = await compressImage(file);
         $('np-preview').src = newProdImg;
         $('np-preview').style.display = 'block';
         $('upload-placeholder').style.display = 'none';
@@ -1004,7 +1145,7 @@
         for (const p of products) {
             if (p.image && p.image.startsWith('data:image/jpeg')) {
                 try {
-                    const optimizedWebp = await compressImage(p.image, 500, 0.6);
+                    const optimizedWebp = await compressImage(p.image);
                     await updateDoc(doc(db, 'products', p.fid), { image: optimizedWebp });
                     count++;
                 } catch(e) { console.warn('Erro ao otimizar ' + p.name, e); }
