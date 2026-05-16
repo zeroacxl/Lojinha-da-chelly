@@ -485,7 +485,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 h-[72px] bg-white border-b border-slate-pale z-50 flex items-center shadow-sm">
+      <nav className="fixed top-0 left-0 right-0 h-[72px] bg-white border-b border-slate-pale z-50 flex items-center">
         <div className="max-w-7xl mx-auto w-full px-6 flex justify-between items-center">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => { setIsAdmin(false); setAdminView('produtos'); }}>
             <div className="w-10 h-10 bg-gradient-to-br from-rose to-blue rounded-xl flex items-center justify-center shadow-lg shadow-rose/20 p-2">
@@ -521,14 +521,14 @@ export default function App() {
             {/* Shop View */}
             {/* High Impact Billboard (Promotion Screen) */}
             {featuredPerfumes.length > 0 && (
-              <div className="relative h-[400px] md:h-[500px] mb-12 rounded-[2.5rem] overflow-hidden shadow-2xl group">
+              <div className="relative h-[300px] md:h-[500px] mb-12 rounded-[2.5rem] overflow-hidden shadow-lg group">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={featuredPerfumes[currentBanner].fid}
-                    initial={{ opacity: 0, scale: 1.1 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.8 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
                     className="absolute inset-0"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-slate via-slate/60 to-transparent z-10" />
@@ -1551,24 +1551,18 @@ export default function App() {
 
       {/* Floating Buttons */}
       <div className="fixed bottom-6 right-6 z-[60] flex flex-col gap-3">
-        <AnimatePresence>
-          {showBackToTop && (
-            <motion.button
-              initial={{ opacity: 0, scale: 0.5, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.5, y: 20 }}
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="w-12 h-12 bg-white text-slate shadow-2xl border border-slate-pale rounded-full flex items-center justify-center hover:bg-slate hover:text-white transition-all"
-            >
-              <ChevronRight className="-rotate-90" size={24} />
-            </motion.button>
-          )}
-        </AnimatePresence>
+        {showBackToTop && (
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="w-12 h-12 bg-white text-slate border border-slate-pale rounded-full flex items-center justify-center transition-all shadow-md"
+          >
+            <ChevronRight className="-rotate-90" size={24} />
+          </button>
+        )}
         <a
           href={`https://wa.me/${storeConfig.wpp.replace(/\D/g, '')}`}
           target="_blank"
-          className="w-14 h-14 bg-[#25D366] text-white shadow-2xl rounded-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all animate-bounce"
-          style={{ animationDuration: '3s' }}
+          className="w-14 h-14 bg-[#25D366] text-white rounded-2xl flex items-center justify-center transition-all shadow-md"
         >
           <Phone size={28} />
         </a>
@@ -1592,15 +1586,11 @@ function ProductCard({ product, onDetail, onAdd, onNotify, isFavorite, onToggleF
   const discountPercent = isPromo ? Math.round(((product.price - (product.discountPrice || 0)) / product.price) * 100) : 0;
   const finalPrice = product.discountPrice || product.price;
 
-  // Badge Novidade (7 dias)
   const isNew = product.createdAt ? (Date.now() - product.createdAt.toMillis() < 7 * 24 * 60 * 60 * 1000) : false;
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="bg-white rounded-[1.5rem] border border-blue/5 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all group flex flex-col relative"
+    <div 
+      className="bg-white rounded-[1.5rem] border border-slate-pale overflow-hidden shadow-sm hover:border-blue/20 transition-colors group flex flex-col relative"
     >
       <div className="aspect-[4/5] relative overflow-hidden bg-slate-pale cursor-pointer" onClick={onDetail}>
         {isPromo && (
@@ -1692,6 +1682,6 @@ function ProductCard({ product, onDetail, onAdd, onNotify, isFavorite, onToggleF
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
