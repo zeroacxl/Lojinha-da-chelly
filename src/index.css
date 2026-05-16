@@ -64,9 +64,8 @@
   @apply bg-clip-text text-transparent bg-gradient-to-br from-[#f43f5e] to-[#3b82f6];
 }
 
-body::before {
-  content: '';
-  @apply fixed top-0 right-0 w-full h-full bg-gradient-to-br from-white to-slate-pale pointer-events-none z-0;
+body {
+  @apply bg-white;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -83,15 +82,9 @@ body::before {
 }
 
 .animate-skeleton {
-  animation: pulse-skeleton 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse-skeleton 2s ease-in-out infinite;
 }
 
 .glass-morphism {
-  @apply bg-white/95 border border-slate-pale;
-}
-
-/* Otimização para evitar rastros em celulares lentos */
-* {
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+  @apply bg-white border border-slate-pale;
 }
