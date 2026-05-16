@@ -320,25 +320,35 @@ export default function App() {
   const handleSaveProduct = async () => {
     if (!newProduct.name || !newProduct.price) return showToast('⚠️ Preencha nome e preço');
     
-    const data = {
-      ...newProduct,
+    // Preparação segura dos dados para o Firestore
+    // Removemos campos nulos ou indefinidos que quebram o Firebase
+    const data: any = {
+      name: newProduct.name,
+      price: newProduct.price,
+      discountPrice: newProduct.discountPrice || null,
+      stock: newProduct.stock || 0,
+      category: newProduct.category || 'make',
+      description: newProduct.description || '',
       image: newProductImg || (editingProduct ? products.find(p => p.fid === editingProduct)?.image : ''),
-      createdAt: editingProduct ? undefined : serverTimestamp(),
-      rating: editingProduct ? undefined : 5,
-      comments: editingProduct ? undefined : [],
     };
 
     try {
       if (editingProduct) {
+        // Na edição, não sobrescrevemos data de criação, nota ou comentários
         await updateDoc(doc(db, 'products', editingProduct), data);
         showToast('✅ Produto atualizado');
       } else {
+        // No cadastro novo, adicionamos os campos iniciais
+        data.createdAt = serverTimestamp();
+        data.rating = 5;
+        data.comments = [];
         await addDoc(collection(db, 'products'), data);
         showToast('✅ Produto criado');
       }
       cancelEdit();
     } catch (e) {
-      showToast('⚠️ Erro ao salvar');
+      console.error("Erro ao salvar produto:", e);
+      showToast('⚠️ Erro ao salvar. Tente novamente.');
     }
   };
 
