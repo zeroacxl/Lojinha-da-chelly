@@ -485,7 +485,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 h-[72px] bg-white/80 backdrop-blur-xl border-b border-rose/5 z-50 flex items-center shadow-sm">
+      <nav className="fixed top-0 left-0 right-0 h-[72px] bg-white border-b border-slate-pale z-50 flex items-center shadow-sm">
         <div className="max-w-7xl mx-auto w-full px-6 flex justify-between items-center">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => { setIsAdmin(false); setAdminView('produtos'); }}>
             <div className="w-10 h-10 bg-gradient-to-br from-rose to-blue rounded-xl flex items-center justify-center shadow-lg shadow-rose/20 p-2">
