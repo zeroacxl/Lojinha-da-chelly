@@ -66,12 +66,7 @@
 
 body::before {
   content: '';
-  @apply fixed -top-[40%] -right-[20%] w-[80vw] h-[80vw] bg-[radial-gradient(circle,rgba(244,63,94,0.04),transparent_70%)] pointer-events-none z-0;
-}
-
-body::after {
-  content: '';
-  @apply fixed -bottom-[30%] -left-[10%] w-[60vw] h-[60vw] bg-[radial-gradient(circle,rgba(59,130,246,0.05),transparent_70%)] pointer-events-none z-0;
+  @apply fixed top-0 right-0 w-full h-full bg-gradient-to-br from-white to-slate-pale pointer-events-none z-0;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -92,5 +87,11 @@ body::after {
 }
 
 .glass-morphism {
-  @apply bg-white/10 backdrop-blur-md border border-white/20;
+  @apply bg-white/95 border border-slate-pale;
+}
+
+/* Otimização para evitar rastros em celulares lentos */
+* {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
