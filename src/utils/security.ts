@@ -4,8 +4,12 @@ export const useGuardBot = (onLockdown: () => void) => {
   const [threatLevel, setThreatLevel] = useState(0);
 
   useEffect(() => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
     // 1. Anti-Debugger / Console Detection
     const interval = setInterval(() => {
+      if (isMobile) return;
+      
       try {
         const check = () => {
           const start = Date.now();
