@@ -1,6 +1,24 @@
 @import "tailwindcss";
 
+/*
+ * Design system da Chelly Shop.
+ *
+ * Organização:
+ *   1. @theme      -> tokens (cores, fontes, raios, animações)
+ *   2. @layer base -> reset e padrão dos elementos
+ *   3. @layer components -> classes reutilizáveis (.btn-primary, .input-style)
+ *   4. utilitários -> scrollbar, gradient-text, safe-area
+ *   5. acessibilidade/performance -> reduced motion, foco, alvo de toque
+ *
+ * A versão anterior tinha `body { @apply bg-[#fafbff] }` dentro de @layer base
+ * e depois `body { @apply bg-white }` fora — a segunda vencia e a primeira era
+ * só peso morto. Também não havia nada para `prefers-reduced-motion`, então o
+ * carrossel e as animações rodavam mesmo para quem pede menos movimento no
+ * sistema (enjoo, vestibular). Isso agora está tratado.
+ */
+
 @theme {
+  /* Cores da marca */
   --color-rose: #f43f5e;
   --color-rose-light: #ffe4e6;
   --color-rose-dark: #be123c;
@@ -12,79 +30,207 @@
   --color-slate-soft: #94a3b8;
   --color-slate-pale: #f8fafc;
 
-  --font-display: "Playfair Display", serif;
-  --font-body: "DM Sans", sans-serif;
+  /* Tipografia */
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
 
+  /* Raios (mantidos: o desenho da loja depende deles) */
   --radius-2xl: 1.5rem;
   --radius-3xl: 2rem;
 
+  /* Animações utilitárias */
   --animate-fade-up: fadeUp 0.4s ease-out forwards;
   --animate-pulse-discount: pulseDiscount 2s infinite;
 
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   @keyframes pulseDiscount {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+  @keyframes pulseSkeleton {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
   }
 }
 
+/* ── Base ───────────────────────────────────────────────────────────── */
 @layer base {
-  body {
-    @apply font-body text-slate bg-[#fafbff] min-h-screen overflow-x-hidden;
+  html {
+    /* Impede o Android de aumentar a fonte sozinho e quebrar o layout. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* Âncoras (#catalogo) chegam abaixo da navbar fixa. */
+    scroll-padding-top: 6rem;
   }
 
-  h1, h2, h3, h4, .font-display {
-    @apply font-display italic;
+  body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    background-color: #fff;
+    color: var(--color-slate);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeSpeed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    font-family: var(--font-display);
+    font-style: italic;
+  }
+
+  /* Sem contorno azul em tudo: só foco visível de verdade (veja abaixo). */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-blue);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Evita que o usuário selecione texto sem querer ao arrastar o carrossel. */
+  [aria-roledescription="carrossel"] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Formulários herdam a fonte (iOS Safari usa fonte própria minúscula). */
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
   }
 }
 
+/* ── Componentes ────────────────────────────────────────────────────── */
 @layer components {
   .btn-primary {
-    @apply bg-slate text-white px-6 py-3 rounded-2xl font-bold uppercase tracking-widest text-[0.7rem] hover:bg-blue transition-all active:scale-95 shadow-lg shadow-slate/20;
+    @apply bg-slate text-white px-6 py-3 rounded-2xl font-bold uppercase tracking-widest text-[0.7rem] shadow-lg shadow-slate/20 transition-all active:scale-95 hover:bg-blue;
   }
 
   .input-style {
-    @apply w-full px-5 py-3.5 bg-white border-2 border-slate-pale rounded-2xl font-bold text-sm outline-none focus:border-blue-light transition-colors placeholder:text-slate-soft;
+    @apply w-full px-5 py-3.5 bg-white border-2 border-slate-pale rounded-2xl font-bold text-sm outline-none transition-colors focus:border-blue-light placeholder:text-slate-soft;
   }
+}
+
+/* ── Utilitários ────────────────────────────────────────────────────── */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-br from-[#f43f5e] to-[#3b82f6];
+}
+
+.glass-morphism {
+  @apply bg-white border border-slate-pale;
+}
+
+.animate-skeleton {
+  animation: pulseSkeleton 2s ease-in-out infinite;
+}
+
+/* Esconde a barra de rolagem sem impedir o scroll (abas de categoria). */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-thumb {
   @apply bg-slate-soft/20 rounded-full;
 }
 
-.gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-br from-[#f43f5e] to-[#3b82f6];
+/* Espaço para a barra inferior do iPhone em elementos fixos. */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
-body {
-  @apply bg-white;
+/* ── Acessibilidade e performance ───────────────────────────────────── */
+
+/*
+ * Usuário pediu menos movimento no sistema -> desliga animação decorativa.
+ * Mantemos apenas transições curtas de cor, que não causam desconforto.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-@keyframes pulse-skeleton {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+/* Modo escuro do sistema: não temos tema escuro, então declaramos só light.
+   Sem isso o iOS inverte campos de formulário e fica estranho. */
+@media (prefers-color-scheme: dark) {
+  input,
+  textarea,
+  select {
+    color-scheme: light;
+  }
 }
 
-.animate-skeleton {
-  animation: pulse-skeleton 2s ease-in-out infinite;
+/* Economia de dados ligada no navegador -> não carrega animação de esqueleto. */
+@media (prefers-reduced-data: reduce) {
+  .animate-skeleton {
+    animation: none;
+  }
 }
 
-.glass-morphism {
-  @apply bg-white border border-slate-pale;
+/* Impressão: nenhuma loja precisa imprimir o carrossel. */
+@media print {
+  nav,
+  .fixed,
+  [aria-roledescription="carrossel"] {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
 }

@@ -1,0 +1,57 @@
+# robots.txt — Chelly Shop
+# Troque o domínio abaixo pelo domínio real onde a loja estiver publicada.
+
+User-agent: *
+Allow: /
+
+# Páginas que não devem gastar orçamento de rastreio.
+Disallow: /offline.html
+Disallow: /icons/
+
+# Onde está o mapa do site.
+Sitemap: https://lojinha-da-chelly.vercel.app/sitemap.xml
+
+# Regras específicas por robô -------------------------------------------
+
+# Google: pode indexar tudo, inclusive imagens dos produtos.
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+# Bing
+User-agent: Bingbot
+Allow: /
+
+# Pinterest (importante para loja de cosméticos: gera tráfego de imagem)
+User-agent: Pinterestbot
+Allow: /
+
+# WhatsApp/Facebook: precisam ler as tags Open Graph para a prévia do link.
+User-agent: WhatsApp
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+# Bloqueia coletores de IA que não trazem visita de volta à loja.
+# (Remova estas linhas se quiser aparecer em respostas de IA.)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+# Bloqueia ferramentas que só copiam preço.
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /

@@ -1,0 +1,52 @@
+# ── Dependências ────────────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ── Build (gerado por `npm run build`; nunca versionar) ─────────────────
+dist/
+dist-ssr/
+build/
+out/
+*.local
+
+# ── Service worker gerado em dev pelo vite-plugin-pwa ───────────────────
+dev-dist/
+sw.js
+workbox-*.js
+
+# ── Ambiente / segredos ─────────────────────────────────────────────────
+# `.env` pode conter o ID do AdSense e o domínio; não vai para o Git.
+.env
+.env.*
+!.env.example
+
+# ── Editores / SO ───────────────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# ── Logs e caches de ferramenta ─────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+.stylelintcache
+coverage/
+*.tsbuildinfo
+
+# ── Diversos ────────────────────────────────────────────────────────────
+.vercel
+.netlify
+.firebase/
+*.tmp

@@ -1,15 +1,312 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chelly Shop ✨ | Cosméticos & Essências</title>
+
+    <!--
+      ── SEGURANÇA ──────────────────────────────────────────────────────
+      CSP sem 'unsafe-inline' em script-src: mesmo que alguém consiga gravar
+      "<script>…" num nome de produto, o navegador se recusa a executar.
+      'unsafe-inline' fica apenas em style-src porque o React/framer-motion
+      escrevem CSS inline (atributo style) — isso não é vetor de execução.
+      frame-ancestors substitui o X-Frame-Options (impede clickjacking).
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com https://*.google.com https://*.googleadservices.com https://*.googlesyndication.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.gstatic.com https://pagead2.googlesyndication.com https://*.doubleclick.net https://*.google.com https://wa.me; frame-src 'self' https://*.google.com https://*.doubleclick.net https://*.googlesyndication.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- ── VIEWPORT / APP ──────────────────────────────────────────── -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f43f5e" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Chelly Shop" />
+    <meta name="application-name" content="Chelly Shop" />
+    <meta name="msapplication-TileColor" content="#f43f5e" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- ── SEO ─────────────────────────────────────────────────────── -->
+    <title>Chelly Shop ✨ | Cosméticos, Perfumes e Essências em Rio Branco</title>
+    <meta
+      name="description"
+      content="Loja online de cosméticos, perfumes, skincare, maquiagem e cuidados com cabelo e corpo em Rio Branco (AC). Compre pelo WhatsApp e pague com Pix."
+    />
+    <meta
+      name="keywords"
+      content="cosméticos Rio Branco, perfumes Rio Branco, loja de cosméticos Acre, skincare Rio Branco, maquiagem online, essências e perfumaria, produtos de beleza Acre, Chelly Shop"
+    />
+    <meta name="author" content="Chelly Shop" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://lojinha-da-chelly.vercel.app" />
+    <meta name="geo.region" content="BR-AC" />
+    <meta name="geo.placename" content="Rio Branco" />
+
+    <!-- ── OPEN GRAPH (WhatsApp, Facebook, Instagram) ──────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Chelly Shop" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content="Chelly Shop ✨ | Cosméticos, Perfumes e Essências" />
+    <meta
+      property="og:description"
+      content="Perfumes, skincare, maquiagem e cuidados pessoais com entrega em Rio Branco - AC. Pedido pelo WhatsApp e pagamento via Pix."
+    />
+    <meta property="og:url" content="https://lojinha-da-chelly.vercel.app" />
+    <meta property="og:image" content="https://lojinha-da-chelly.vercel.app/icons/pwa-512x512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:alt" content="Chelly Shop — cosméticos e essências" />
+
+    <!-- ── TWITTER CARD ────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Chelly Shop ✨ | Cosméticos e Essências" />
+    <meta
+      name="twitter:description"
+      content="Perfumes, skincare e maquiagem em Rio Branco - AC. Pague com Pix e receba em casa."
+    />
+    <meta name="twitter:image" content="https://lojinha-da-chelly.vercel.app/icons/pwa-512x512.png" />
+
+    <!-- ── ÍCONES ──────────────────────────────────────────────────── -->
+    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icons/favicon-96x96.png" sizes="96x96" type="image/png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/icons/favicon.svg" color="#f43f5e" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- ── PERFORMANCE ─────────────────────────────────────────────── -->
+    <!-- DNS antecipado: o navegador resolve antes de precisar. -->
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
+    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=DM+Sans:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
+    <!--
+      As fontes são injetadas de forma assíncrona por src/main.tsx.
+      De propósito não usamos o truque clássico de carregar a folha de estilo
+      com media="print" e trocá-la por um atributo onload: handler inline é
+      bloqueado pela nossa CSP (e com razão — é o mesmo mecanismo do XSS).
+      O resultado é o mesmo, sem abrir exceção na política: a fonte não
+      bloqueia a primeira pintura.
+    -->
+
+    <!-- ── DADOS ESTRUTURADOS (JSON-LD) ───────────────────────────────
+         Lidos pelo Google SEM executar JavaScript: é o que permite aparecer
+         com preço, nota e disponibilidade no resultado da busca.
+         src/utils/seo.ts atualiza estes blocos conforme o usuário navega. -->
+    <script type="application/ld+json" id="ld-store">
+      {
+        "@context": "https://schema.org",
+        "@type": ["Store", "OnlineBusiness"],
+        "@id": "https://lojinha-da-chelly.vercel.app/#store",
+        "name": "Chelly Shop",
+        "description": "Loja online de cosméticos, perfumes, skincare, maquiagem e cuidados com o cabelo e o corpo em Rio Branco (AC).",
+        "url": "https://lojinha-da-chelly.vercel.app",
+        "image": "https://lojinha-da-chelly.vercel.app/icons/pwa-512x512.png",
+        "logo": "https://lojinha-da-chelly.vercel.app/icons/favicon.svg",
+        "priceRange": "$$",
+        "currenciesAccepted": "BRL",
+        "paymentAccepted": "Pix, WhatsApp",
+        "availableLanguage": "pt-BR",
+        "areaServed": {
+          "@type": "City",
+          "name": "Rio Branco",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Rio Branco",
+            "addressRegion": "AC",
+            "addressCountry": "BR"
+          }
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Rio Branco",
+          "addressRegion": "AC",
+          "addressCountry": "BR"
+        }
+      }
+    </script>
+    <script type="application/ld+json" id="ld-website">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": "https://lojinha-da-chelly.vercel.app/#website",
+        "url": "https://lojinha-da-chelly.vercel.app",
+        "name": "Chelly Shop ✨ | Cosméticos, Perfumes e Essências em Rio Branco",
+        "description": "Cosméticos, perfumes, skincare e maquiagem com entrega em Rio Branco (AC).",
+        "inLanguage": "pt-BR",
+        "publisher": { "@id": "https://lojinha-da-chelly.vercel.app/#store" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://lojinha-da-chelly.vercel.app/?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+
+    <!-- ── CRITICAL CSS ───────────────────────────────────────────────
+         Pinta a tela de carregamento antes de qualquer JS/CSS externo.
+         Elimina o "flash branco" e melhora o First Contentful Paint. -->
+    <style>
+      html {
+        background: #fff;
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: #fff;
+        font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+          sans-serif;
+        color: #0f172a;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      #boot {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        background: #fff;
+        z-index: 9999;
+        padding: 1.5rem;
+        text-align: center;
+      }
+      #boot .logo {
+        width: 4.5rem;
+        height: 4.5rem;
+        border-radius: 1.4rem;
+        background: linear-gradient(135deg, #f43f5e, #3b82f6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 18px 40px rgba(244, 63, 94, 0.25);
+      }
+      #boot .logo svg {
+        width: 2.6rem;
+        height: 2.6rem;
+        fill: #fff;
+      }
+      #boot h1 {
+        margin: 0;
+        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        font-style: italic;
+        font-weight: 900;
+        font-size: clamp(1.5rem, 7vw, 2.25rem);
+        background: linear-gradient(to bottom right, #f43f5e, #3b82f6);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      #boot .bar {
+        width: 12rem;
+        max-width: 70vw;
+        height: 0.25rem;
+        border-radius: 999px;
+        background: #f1f5f9;
+        overflow: hidden;
+      }
+      #boot .bar span {
+        display: block;
+        height: 100%;
+        width: 40%;
+        border-radius: 999px;
+        background: linear-gradient(to right, #f43f5e, #3b82f6);
+        animation: boot-slide 1.2s ease-in-out infinite;
+      }
+      #boot p {
+        margin: 0;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #94a3b8;
+      }
+      @keyframes boot-slide {
+        0% {
+          transform: translateX(-110%);
+        }
+        100% {
+          transform: translateX(320%);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #boot .bar span {
+          animation-duration: 2.4s;
+        }
+      }
+      /* O app remove este bloco assim que monta. */
+      #boot[hidden] {
+        display: none;
+      }
+    </style>
+
+    <!--
+      ── ADSENSE (pré-conexão) ────────────────────────────────────────
+      Só aquece o DNS; o script em si é injetado por src/utils/adsense.ts e
+      somente quando existir um ID de editor configurado (VITE_ADSENSE_CLIENT).
+    -->
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
   </head>
+
   <body>
+    <!-- Tela de carregamento pintada antes do JavaScript chegar. -->
+    <div id="boot" role="status" aria-live="polite" aria-label="Carregando a loja">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 6 L58 42 L94 50 L58 58 L50 94 L42 58 L6 50 L42 42 Z" />
+        </svg>
+      </div>
+      <h1>Chelly Shop ✨</h1>
+      <div class="bar"><span></span></div>
+      <p>Carregando magia…</p>
+    </div>
+
     <div id="root"></div>
+
+    <!-- Conteúdo indexável para quem desabilita JavaScript e para o robô
+         entender o assunto da página sem depender do React. -->
+    <noscript>
+      <div style="max-width: 42rem; margin: 0 auto; padding: 2rem 1.25rem; line-height: 1.7">
+        <h1 style="font-size: 1.6rem; font-weight: 900">
+          Chelly Shop — cosméticos, perfumes e essências em Rio Branco (AC)
+        </h1>
+        <p>
+          A Chelly Shop é uma loja de beleza com entrega exclusiva em Rio Branco, no Acre. Trabalhamos
+          com perfumes, skincare, maquiagem, produtos para cabelo e cuidados com o corpo.
+        </p>
+        <p>
+          O pedido é fechado pelo WhatsApp e o pagamento é feito via Pix, com QR Code gerado na hora.
+          Você também pode pedir para ser avisada quando um produto esgotado voltar ao estoque.
+        </p>
+        <p>
+          <strong>Este site precisa de JavaScript habilitado.</strong> Ative o JavaScript no
+          navegador para ver o catálogo completo, os preços e finalizar sua compra.
+        </p>
+        <h2 style="font-size: 1.1rem">Categorias</h2>
+        <ul>
+          <li>Perfumes e essências</li>
+          <li>Skincare e cuidados com a pele</li>
+          <li>Maquiagem</li>
+          <li>Cabelo</li>
+          <li>Corpo e banho</li>
+        </ul>
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

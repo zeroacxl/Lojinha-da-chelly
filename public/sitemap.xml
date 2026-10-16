@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  sitemap.xml — Chelly Shop
+
+  A loja é uma SPA: todo o catálogo mora na mesma URL, filtrado por
+  parâmetro. Para o Google conseguir indexar as categorias separadamente
+  (e cada uma aparecer na busca com o próprio título), listamos aqui as
+  URLs com `?categoria=` — que é exatamente o que src/utils/seo.ts usa como
+  canonical quando o visitante troca de aba.
+
+  Ao publicar em domínio próprio:
+    1. troque todas as ocorrências de https://lojinha-da-chelly.vercel.app
+    2. atualize <lastmod> quando mudar algo relevante
+    3. envie o arquivo no Google Search Console -> Sitemaps
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://lojinha-da-chelly.vercel.app/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://lojinha-da-chelly.vercel.app/?categoria=perfumes</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lojinha-da-chelly.vercel.app/?categoria=skincare</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lojinha-da-chelly.vercel.app/?categoria=make</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lojinha-da-chelly.vercel.app/?categoria=cabelo</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lojinha-da-chelly.vercel.app/?categoria=corpo</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lojinha-da-chelly.vercel.app/?ordenar=price-asc</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+</urlset>

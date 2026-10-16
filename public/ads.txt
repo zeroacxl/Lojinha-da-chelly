@@ -1,0 +1,20 @@
+# ads.txt — Chelly Shop
+#
+# O AdSense EXIGE este arquivo na RAIZ do domínio
+# (https://seudominio.com/ads.txt). Sem ele, o Google deixa de veicular
+# anúncios na página depois de alguns dias ("unauthorized seller").
+#
+# COMO PREENCHER:
+#   1. Abra https://www.google.com/adsense -> Configurações -> Conta
+#   2. Copie o "ID do editor" (ex.: pub-0000000000000000)
+#   3. Substitua PUB-0000000000000000 abaixo pelo SEU id, mantendo o
+#      prefixo "pub-" (não use "ca-pub-" aqui; o ads.txt usa "pub-")
+#
+# Formato:  <sistema de anúncios>, <id do editor>, <tipo de relação>, <TAG ID>
+#   DIRECT  = você mesmo opera a conta (o seu caso)
+#   f08c47fec0942fa0 = TAG ID oficial do Google, não alterar
+#
+# Enquanto o arquivo estiver com o placeholder, o AdSense simplesmente
+# ignora — nada quebra na loja.
+
+google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
