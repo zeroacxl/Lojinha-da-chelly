@@ -1,0 +1,20 @@
+# security.txt (RFC 9116) — Chelly Shop
+#
+# Diz para pesquisadores de segurança como reportar uma falha de forma
+# responsável. É sinal de maturidade e vários programas de bug bounty
+# verificam a presença deste arquivo.
+#
+# Substitua o contato abaixo pelo canal real da loja.
+
+Contact: mailto:seguranca@example.com
+Contact: https://wa.me/5506515285426
+
+Expires: 2027-10-16T00:00:00.000Z
+
+Preferred-Languages: pt, en
+Canonical: https://lojinha-da-chelly.vercel.app/.well-known/security.txt
+
+Policy: https://lojinha-da-chelly.vercel.app/.well-known/security.txt
+
+# Escopo: apenas este domínio. Testes de carga/estresse não são autorizados.
+Hiring: false
